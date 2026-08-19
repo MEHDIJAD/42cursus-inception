@@ -1,0 +1,39 @@
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  wp_data:
+    driver: local
+    driver_opts: # extra options passed to the local driver, beyond just "use local storage."
+      type: none #  tells the driver not to format or manage its own filesystem type for this volume; a prerequisite for the next line.
+      o: bind # the actual instruction: mount as a bind mount under the hood, using the kernel's real bind-mount mechanism.
+      device: /home/${LOGIN}/data/wordpress #  the real host path being bound to.
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${LOGIN}/data/mariadb
+
+secrets:
+  db_password: 
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
+    networks:
+      - inception
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - db_root_password
+    restart: always
