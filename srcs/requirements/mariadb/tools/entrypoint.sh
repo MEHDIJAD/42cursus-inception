@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+mkdir -p /run/mysqld
+chown mysql:mysql /run/mysqld
+
 DB_DATA_DIR=/var/lib/mysql
 
 # is the list of files in the data directory empty? ➜ 
@@ -11,9 +14,7 @@ if [ -z "$(ls -A "$DB_DATA_DIR" 2>/dev/null)" ]; then
 	DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 	DB_PASSWORD=$(cat /run/secrets/db_password)
 
-	mkdir -p /run/mysqld
-	chown mysql:mysql /run/mysqld
-	
+
 	mysqld --user=mysql --bootstrap <<-EOSQL
     USE mysql;
     FLUSH PRIVILEGES;
