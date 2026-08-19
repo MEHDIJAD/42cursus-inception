@@ -1,16 +1,19 @@
 networks:
   inception:
     driver: bridge
+    name: inception
 
 volumes:
   wp_data:
     driver: local
+    name: wp_data
     driver_opts: # extra options passed to the local driver, beyond just "use local storage."
       type: none #  tells the driver not to format or manage its own filesystem type for this volume; a prerequisite for the next line.
       o: bind # the actual instruction: mount as a bind mount under the hood, using the kernel's real bind-mount mechanism.
       device: /home/${LOGIN}/data/wordpress #  the real host path being bound to.
   db_data:
     driver: local
+    name: db_data
     driver_opts:
       type: none
       o: bind
