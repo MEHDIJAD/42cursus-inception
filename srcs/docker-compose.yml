@@ -24,6 +24,8 @@ secrets:
     file: ../secrets/db_password.txt
   db_root_password:
     file: ../secrets/db_root_password.txt
+  credentials:
+    file: ../secrets/credentials.txt
 
 services:
   mariadb:
@@ -39,4 +41,20 @@ services:
     secrets:
       - db_password
       - db_root_password
+    restart: always
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    networks:
+      - inception
+    volumes:
+      - wp_data:/var/www/html
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - credentials
+    depends_on:
+      - mariadb
     restart: always
