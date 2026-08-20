@@ -1,9 +1,9 @@
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	mariadb-server \
-	mariadb-client \
-	&& rm -rf /var/lib/apt/lists/*
+      mariadb-server \
+      mariadb-client \
+    && rm -rf /var/lib/apt/lists/* /var/lib/mysql/*
 
 COPY conf/my.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
