@@ -28,7 +28,7 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
   # credentials.txt: KEY=VALUE lines, sourced directly as shell vars.
   # This project's own convention — the subject doesn't mandate a
   # format, only that the file exists and holds real secret values.
-  . /run/secrets/credentials.txt
+  . /run/secrets/credentials
 
   # --- 3. Reject a banned admin username before it's ever used ---
   case "$(echo "$WP_ADMIN_USER" | tr 'A-Z' 'a-z')" in
