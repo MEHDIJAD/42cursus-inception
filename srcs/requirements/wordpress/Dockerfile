@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     php-mbstring \
     php-zip \
     curl \
+	ca-certificates \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
