@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     php-zip \
     curl \
 	ca-certificates \
+	netcat-openbsd \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 

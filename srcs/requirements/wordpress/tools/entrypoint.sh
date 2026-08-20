@@ -8,11 +8,12 @@ WP_PATH=/var/www/html
 # its own first-time init (Lesson 4) when this container starts.
 # This retries a fixed number of times, then gives up loudly.
 i=0
-until mysqladmin ping -h "$WORDPRESS_DB_HOST" --silent 2>/dev/null || [ "$i" -ge 30 ]; do
+until nc -z "$WORDPRESS_DB_HOST" 3306 2>/dev/null || [ "$i" -ge 30 ]; do
   i=$((i + 1))
   echo "Waiting for database... ($i/30)"
   sleep 1
 done
+
 
 if [ "$i" -ge 30 ]; then
   echo "Database never became reachable — aborting." >&2
