@@ -14,6 +14,7 @@ clean: down
 
 
 fclean: down
+	docker volume rm db_data wp_data
 	docker system prune -af --volumes
 
 re: fclean up
