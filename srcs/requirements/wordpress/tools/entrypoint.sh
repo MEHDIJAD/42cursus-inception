@@ -10,19 +10,19 @@ WP_PATH=/var/www/html
 i=0
 until nc -z "$WORDPRESS_DB_HOST" 3306 2>/dev/null || [ "$i" -ge 30 ]; do
   i=$((i + 1))
-  echo "Waiting for database... ($i/30)"
+  printf "${YELLOW}[wordpress]${NC} Waiting for database... ($i/30)\n"
   sleep 1
 done
 
 
 if [ "$i" -ge 30 ]; then
-  echo "Database never became reachable — aborting." >&2
+  printf "${RED}[wordpress]${NC} Database never became reachable — aborting.\n" >&2
   exit 1
 fi
 
 # --- 2. Only install once — the volume may already hold a real site ---
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
-  echo "No WordPress install found — setting up..."
+  printf "${YELLOW}[wordpress]${NC} No WordPress install found — setting up...\n"
 
   DB_PASSWORD=$(cat /run/secrets/db_password)
   # credentials.txt: KEY=VALUE lines, sourced directly as shell vars.
@@ -63,7 +63,7 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
     --user_pass="$WP_USER_PASSWORD" \
     --allow-root
 
-  echo "WordPress install complete."
+  printf "${GREEN}[wordpress]${NC} WordPress install complete.\n"
 fi
 
 chown -R www-data:www-data "$WP_PATH"
