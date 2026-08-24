@@ -8,4 +8,4 @@ EXPOSE 6379
 
 # --daemonize no: same PID-1 requirement as every other service —
 # redis-server backgrounds itself by default otherwise
-CMD ["redis-server", "--daemonize", "no", "--bind", "0.0.0.0"]
+CMD ["redis-server", "--daemonize", "no", "--bind", "0.0.0.0", "--protected-mode", "no"]
