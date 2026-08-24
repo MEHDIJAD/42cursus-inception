@@ -68,6 +68,14 @@ fi
 
 chown -R www-data:www-data "$WP_PATH"
 
+# 1. connection details first — set them before the plugin needs them
+wp config set WP_REDIS_HOST "$REDIS_HOST" --path=/var/www/html --allow-root
+wp config set WP_REDIS_PORT "$REDIS_PORT" --path=/var/www/html --allow-root --raw
+
+# 2. install + activate the plugin, then turn the object cache on
+wp plugin install redis-cache --activate --path=/var/www/html --allow-root
+wp redis enable --path=/var/www/html --allow-root
+
 # --nodaemonize: without this, php-fpm forks into the background
 # and this script (PID 1) exits — the container would stop
 # immediately even though php-fpm is technically still "running".

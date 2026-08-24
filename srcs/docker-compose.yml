@@ -55,8 +55,7 @@ services:
     secrets:
       - db_password
       - credentials
-    depends_on:
-      - mariadb
+    depends_on: [mariadb, redis]
     restart: always
   nginx:
     build: ./requirements/nginx
@@ -72,4 +71,10 @@ services:
       - .env
     depends_on:
       - wordpress
+    restart: always
+  redis:
+    build: ./requirements/bonus/redis
+    image: redis
+    container_name: redis
+    networks: [inception]
     restart: always
