@@ -3,6 +3,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     php-fpm \
     php-mysqli \
+	php-redis \
     php-curl \
     php-gd \
     php-xml \
@@ -27,4 +28,3 @@ WORKDIR /var/www/html
 EXPOSE 9000
 
 ENTRYPOINT ["entrypoint.sh"]
-
