@@ -26,6 +26,9 @@ secrets:
     file: ../secrets/db_root_password.txt
   credentials:
     file: ../secrets/credentials.txt
+  ftp_password:
+    file: ../secrets/ftp_password.txt
+
 
 services:
   mariadb:
@@ -77,4 +80,16 @@ services:
     image: redis
     container_name: redis
     networks: [inception]
+    restart: always
+  ftp:
+    build: ./requirements/bonus/ftp
+    image: ftp
+    container_name: ftp
+    networks: [inception]
+    volumes: [wp_data:/var/www/html]
+    secrets: [ftp_password]
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    env_file: [.env]
     restart: always
