@@ -93,3 +93,11 @@ services:
       - "21100-21110:21100-21110"
     env_file: [.env]
     restart: always
+  static-site:
+    build: ./requirements/bonus/static-site
+    image: static-site
+    container_name: static-site
+    networks: [inception]
+    ports:
+      - "8080:8080"
+    restart: always
