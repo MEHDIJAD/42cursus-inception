@@ -101,3 +101,12 @@ services:
     ports:
       - "8080:8080"
     restart: always
+  adminer:
+    build: ./requirements/bonus/adminer
+    image: adminer
+    container_name: adminer
+    networks: [inception]
+    ports:
+      - "8081:8081"
+    depends_on: [mariadb]
+    restart: always
