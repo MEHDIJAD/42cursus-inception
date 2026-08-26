@@ -11,10 +11,11 @@ chown mysql:mysql /run/mysqld
 
 DB_DATA_DIR=/var/lib/mysql
 
+# 0. do we have database from a previous docker compose up
 if [ -z "$(ls -A "$DB_DATA_DIR" 2>/dev/null)" ]; then
 	printf "${YELLOW}[mariadb]${NC} No existing database found — initializing...\n"
+	# 1. create a brand new, empty database from scratch"
 	mariadb-install-db --user=mysql --datadir="$DB_DATA_DIR" >/dev/null
-	# reading the passwords from Docker secrets
 	DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 	DB_PASSWORD=$(cat /run/secrets/db_password)
 
