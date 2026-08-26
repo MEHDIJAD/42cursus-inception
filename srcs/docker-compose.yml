@@ -19,6 +19,7 @@ volumes:
       o: bind
       device: /home/${LOGIN}/data/mariadb
   portainer_data:
+    name: portainer_data
     driver: local
 
 secrets:
