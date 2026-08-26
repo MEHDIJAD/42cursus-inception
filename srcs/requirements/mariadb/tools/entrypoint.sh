@@ -11,7 +11,6 @@ chown mysql:mysql /run/mysqld
 
 DB_DATA_DIR=/var/lib/mysql
 
-# is the list of files in the data directory empty? ➜ 
 if [ -z "$(ls -A "$DB_DATA_DIR" 2>/dev/null)" ]; then
 	printf "${YELLOW}[mariadb]${NC} No existing database found — initializing...\n"
 	mariadb-install-db --user=mysql --datadir="$DB_DATA_DIR" >/dev/null
