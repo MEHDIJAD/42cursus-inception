@@ -1,7 +1,214 @@
-/* requirements/bonus/static-site/site/style.css */
-body { background:#111; color:#eee; font-family:sans-serif; text-align:center; padding:40px; }
-.services { display:flex; gap:20px; justify-content:center; margin-top:30px; }
-.card { border:1px solid #333; border-radius:8px; padding:20px; width:180px; }
-.dot { display:inline-block; width:10px; height:10px; border-radius:50%;
-       background:#3fb950; animation: pulse 1.5s ease-in-out infinite; }
-@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --red: #f85149;
+  --green: #56d364;
+  --orange: #e3b341;
+  --blue: #58a6ff;
+  --purple: #bc8cff;
+  --gold: #d6b656;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero {
+  text-align: center;
+  padding: 40px 20px 20px;
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+}
+
+.hero .sub {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0 8px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-dot:nth-child(2) { animation-delay: .2s; }
+.status-dot:nth-child(3) { animation-delay: .4s; }
+.status-dot:nth-child(4) { animation-delay: .6s; }
+.status-dot:nth-child(5) { animation-delay: .8s; }
+.status-dot:nth-child(6) { animation-delay: 1.0s; }
+.status-dot:nth-child(7) { animation-delay: 1.2s; }
+.status-dot:nth-child(8) { animation-delay: 1.4s; }
+
+@keyframes pulse {
+  0%, 100% { opacity: .4; transform: scale(.85); }
+  50%      { opacity: 1;  transform: scale(1); }
+}
+
+.note {
+  color: var(--muted);
+  font-size: .9rem;
+  min-height: 1.2em;
+}
+
+main {
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 16px 20px;
+}
+
+svg#diagram {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.netbox {
+  fill: none;
+  stroke: #30363d;
+  stroke-dasharray: 6 4;
+}
+
+.vmbox {
+  fill: rgba(88, 166, 255, 0.02);
+  stroke: #3b4b63;
+  stroke-width: 1.5;
+  stroke-dasharray: 12 6;
+}
+
+.vmlabel {
+  fill: #58a6ff;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: .75;
+}
+
+.pathlabel {
+  fill: var(--gold);
+  font-size: 12px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  text-anchor: middle;
+  cursor: pointer;
+}
+
+.netlabel {
+  fill: var(--muted);
+  font-size: 13px;
+}
+
+.box {
+  fill: var(--panel);
+  stroke-width: 2;
+  transition: filter .15s ease, transform .15s ease;
+  cursor: pointer;
+}
+
+.node:hover .box {
+  filter: brightness(1.3);
+}
+
+.box-red    { stroke: var(--red); }
+.box-green  { stroke: var(--green); }
+.box-orange { stroke: var(--orange); }
+.box-blue   { stroke: var(--blue); }
+.box-purple { stroke: var(--purple); }
+.box-gold   { stroke: var(--gold); fill: #1c1a12; }
+.box-html   { stroke: #e34c26; }
+
+/* drawio-style volume cylinders */
+.cyl-body {
+  fill: #3a3115;
+  stroke: var(--gold);
+  stroke-width: 2;
+}
+.cyl-top {
+  fill: #4a3f1c;
+  stroke: var(--gold);
+  stroke-width: 2;
+}
+.cyl-path {
+  fill: var(--gold);
+  font-size: 10.5px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.label {
+  fill: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.label.small { font-size: 13px; }
+
+.icon {
+  font-size: 20px;
+  text-anchor: middle;
+  pointer-events: none;
+  dominant-baseline: middle;
+}
+
+.sublabel {
+  fill: var(--muted);
+  font-size: 11px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* ---- animated connections ---- */
+.edge {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 6;
+  animation: flow 1.2s linear infinite;
+  opacity: .85;
+}
+
+.edge.dashed {
+  stroke-dasharray: 3 5;
+  animation-duration: 1.8s;
+}
+
+@keyframes flow {
+  to { stroke-dashoffset: -24; }
+}
+
+.edge-red    { stroke: var(--red); }
+.edge-green  { stroke: var(--green); }
+.edge-orange { stroke: var(--orange); }
+.edge-blue   { stroke: var(--blue); }
+.edge-purple { stroke: var(--purple); }
+.edge-html   { stroke: #e34c26; }
+.edge-gold   { stroke: var(--gold); animation-duration: 2.4s; opacity: .6; }
+
+footer {
+  color: var(--muted);
+  font-size: .8rem;
+  padding: 20px;
+  text-align: center;
+}

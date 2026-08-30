@@ -83,7 +83,7 @@ clean: down
 # data was written by root/www-data/mysql inside the containers.
 fclean: down
 	@printf "$(RED)Wiping volumes and host data — this cannot be undone...$(RESET)\n"
-	docker volume rm db_data wp_data
+	docker volume rm db_data wp_data portainer_data
 	sudo rm -rf $(DATA_DIR)/*
 	docker system prune -af --volumes
 	@printf "$(GREEN)fclean done.$(RESET)\n"

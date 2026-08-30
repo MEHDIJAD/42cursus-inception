@@ -1,34 +1,259 @@
-<!-- requirements/bonus/static-site/site/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Inception</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inception — eel-garo.42.fr</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Inception</h1>
-  <p>Three containers, one Docker Compose stack, no ready-made images.</p>
 
-  <div class="services">
-    <div class="card">
-      <span class="dot"></span>
-      <h2>nginx</h2>
-      <p>Sole entrypoint. HTTPS only, TLS 1.2/1.3.</p>
+  <header class="hero">
+    <h1>Inception</h1>
+    <p class="sub">8 containers, one Docker network, no PHP on this page.</p>
+    <div class="status-row">
+      <span class="status-dot" data-service="nginx"></span>
+      <span class="status-dot" data-service="wordpress"></span>
+      <span class="status-dot" data-service="mariadb"></span>
+      <span class="status-dot" data-service="redis"></span>
+      <span class="status-dot" data-service="ftp"></span>
+      <span class="status-dot" data-service="static-site"></span>
+      <span class="status-dot" data-service="adminer"></span>
+      <span class="status-dot" data-service="portainer"></span>
     </div>
-    <div class="card">
-      <span class="dot"></span>
-      <h2>wordpress</h2>
-      <p>php-fpm only. No built-in server, no nginx inside.</p>
-    </div>
-    <div class="card">
-      <span class="dot"></span>
-      <h2>mariadb</h2>
-      <p>DB engine only. Two real users, no admin in the name.</p>
-    </div>
-  </div>
+    <p class="note" id="note">Click any box below.</p>
+  </header>
 
-  <p class="note" id="note"></p>
+  <main>
+    <svg id="diagram" viewBox="0 0 1000 810" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- ======== inline logos (drawn here, no external images) ======== -->
+      <defs>
+        <!-- client / browser: monitor with screen -->
+        <symbol id="logo-client" viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="#58a6ff" stroke-width="2"/>
+          <circle cx="12" cy="10" r="4" fill="none" stroke="#58a6ff" stroke-width="1.5"/>
+          <path d="M8,10 h8 M12,6 v8" stroke="#58a6ff" stroke-width="1"/>
+          <path d="M9,21 h6 M12,17 v4" stroke="#58a6ff" stroke-width="2"/>
+        </symbol>
+
+        <!-- nginx: green hexagon + N -->
+        <symbol id="logo-nginx" viewBox="0 0 24 24">
+          <polygon points="12,1 22,6.5 22,17.5 12,23 2,17.5 2,6.5" fill="#009639"/>
+          <path d="M8,16 V8 l8,8 V8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+
+        <!-- wordpress: blue circle + W -->
+        <symbol id="logo-wordpress" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="11" fill="#21759b"/>
+          <circle cx="12" cy="12" r="11" fill="none" stroke="#fff" stroke-width="1" opacity=".4"/>
+          <path d="M4.5,8.5 l3.5,10 2.5-7 M10,8.5 l3.5,10 2.5-7 M15.5,8.5 h4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </symbol>
+
+        <!-- mariadb: database cylinder, mariadb brown -->
+        <symbol id="logo-mariadb" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="5" rx="9" ry="3.5" fill="#c0765a"/>
+          <path d="M3,5 v13 c0,2 4,3.5 9,3.5 s9,-1.5 9,-3.5 V5" fill="#a05a3f"/>
+          <ellipse cx="12" cy="5" rx="9" ry="3.5" fill="#c0765a" stroke="#e8b39e" stroke-width=".8"/>
+          <path d="M3,11 c0,2 4,3.5 9,3.5 s9,-1.5 9,-3.5" fill="none" stroke="#e8b39e" stroke-width=".8"/>
+        </symbol>
+
+        <!-- redis: red stacked discs -->
+        <symbol id="logo-redis" viewBox="0 0 24 24">
+          <polygon points="12,2 21,6 12,10 3,6" fill="#dc382d"/>
+          <polygon points="12,8 21,12 12,16 3,12" fill="#a41e11"/>
+          <polygon points="12,14 21,18 12,22 3,18" fill="#dc382d"/>
+        </symbol>
+
+        <!-- ftp: folder + up arrow -->
+        <symbol id="logo-ftp" viewBox="0 0 24 24">
+          <path d="M2,5 h7 l2,2 h11 v12 a2,2 0 0 1 -2,2 H4 a2,2 0 0 1 -2,-2 z" fill="#bc8cff"/>
+          <path d="M12,18 v-6 M9,14.5 l3,-3.5 3,3.5" fill="none" stroke="#1a1040" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+
+        <!-- static site: HTML5-style orange shield -->
+        <symbol id="logo-static" viewBox="0 0 24 24">
+          <path d="M3,2 h18 l-1.5,17 L12,22 4.5,19z" fill="#e34c26"/>
+          <path d="M12,4 v16" stroke="#f06529" stroke-width="0" />
+          <path d="M8,8 h8 l-.5,3 H8.5 l.3,3 h6.4 l-.4,3.5 -2.8,1 -2.8,-1 -.2,-2" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+        </symbol>
+
+        <!-- adminer: flower dots -->
+        <symbol id="logo-adminer" viewBox="0 0 24 24">
+          <circle cx="12" cy="5" r="3.2" fill="#e3b341"/>
+          <circle cx="18.5" cy="9.5" r="3.2" fill="#e3b341"/>
+          <circle cx="16" cy="17" r="3.2" fill="#e3b341"/>
+          <circle cx="8" cy="17" r="3.2" fill="#e3b341"/>
+          <circle cx="5.5" cy="9.5" r="3.2" fill="#e3b341"/>
+          <circle cx="12" cy="11.5" r="3" fill="#2c6e91"/>
+        </symbol>
+
+        <!-- portainer: whale-cube head -->
+        <symbol id="logo-portainer" viewBox="0 0 24 24">
+          <rect x="4" y="10" width="16" height="10" rx="2" fill="#13b5ea"/>
+          <rect x="7" y="4" width="4.5" height="4.5" fill="#13b5ea"/>
+          <rect x="12.5" y="4" width="4.5" height="4.5" fill="#0e86ad"/>
+          <circle cx="9" cy="14.5" r="1.4" fill="#0d1117"/>
+          <circle cx="15" cy="14.5" r="1.4" fill="#0d1117"/>
+        </symbol>
+
+        <!-- host folder -->
+        <symbol id="logo-folder" viewBox="0 0 24 24">
+          <path d="M2,5 h7 l2,2 h11 v12 a2,2 0 0 1 -2,2 H4 a2,2 0 0 1 -2,-2 z" fill="#d6b656"/>
+          <path d="M2,9 h20" stroke="#8a7423" stroke-width="1"/>
+        </symbol>
+      </defs>
+
+      <!-- ======== VM boundary (outermost layer) ======== -->
+      <rect x="8" y="66" width="984" height="736" rx="18" class="vmbox"/>
+      <text x="30" y="92" class="vmlabel">Debian VM (VirtualBox) — everything below runs inside it</text>
+
+      <!-- network boundary -->
+      <rect x="24" y="106" width="952" height="530" rx="14" class="netbox"/>
+      <text x="44" y="130" class="netlabel">docker network: inception (bridge)</text>
+
+      <!-- connections: orthogonal, drawio-style (right-angle turns) -->
+      <g id="edges">
+        <!-- browser -> exposed services -->
+        <path id="e-browser-nginx"     class="edge edge-green"  d="M430,62 L430,88 L120,88 L120,146"/>
+        <path id="e-browser-static"    class="edge edge-html"   d="M465,62 L465,100 L320,100 L320,146"/>
+        <path id="e-browser-adminer"   class="edge edge-orange" d="M500,62 L500,146"/>
+        <path id="e-browser-portainer" class="edge edge-blue"   d="M535,62 L535,100 L680,100 L680,146"/>
+        <path id="e-ftpclient-ftp"     class="edge edge-purple" d="M860,62 L860,146"/>
+
+        <!-- internal request path -->
+        <path id="e-nginx-wp"        class="edge edge-green"  d="M120,216 L120,296"/>
+        <path id="e-wp-mariadb"      class="edge edge-blue"   d="M120,366 L120,436"/>
+        <path id="e-wp-redis"        class="edge edge-blue"   d="M200,331 L300,331"/>
+        <path id="e-adminer-mariadb" class="edge edge-orange dashed" d="M500,216 L500,471 L202,471"/>
+
+        <!-- containers -> volumes -->
+        <path id="e-wp-vol"        class="edge edge-gold dashed" d="M100,366 L100,410 L28,410 L28,590 L38,590"/>
+        <path id="e-db-vol"        class="edge edge-gold dashed" d="M160,506 L160,530 L320,530 L320,558"/>
+        <path id="e-ftp-vol"       class="edge edge-gold dashed" d="M860,216 L860,540 L120,540 L120,558"/>
+        <path id="e-portainer-vol" class="edge edge-gold dashed" d="M680,216 L680,530 L500,530 L500,558"/>
+
+        <!-- volumes -> real VM folders (the driver_opts bind) -->
+        <path id="e-wpvol-host" class="edge edge-gold" d="M120,630 L120,696"/>
+        <path id="e-dbvol-host" class="edge edge-gold" d="M320,630 L320,696"/>
+        <path id="e-pvol-host"  class="edge edge-gold" d="M500,630 L500,696"/>
+      </g>
+
+      <!-- browser -->
+      <g class="node" data-info="Your browser. Only thing outside the VM — reaches it via VirtualBox port-forward rules.">
+        <rect x="410" y="8" width="180" height="54" rx="8" class="box box-blue"/>
+        <use href="#logo-client" x="422" y="20" width="28" height="28"/>
+        <text x="516" y="40" class="label">Browser (client)</text>
+      </g>
+
+      <!-- ftp client: browsers dropped FTP support, so this needs its own client -->
+      <g class="node" data-info="FTP client (ftp CLI / FileZilla) — browsers can't speak FTP anymore. Logs in as wp_ftp, the only account (no anonymous).">
+        <rect x="780" y="8" width="160" height="54" rx="8" class="box box-purple"/>
+        <use href="#logo-ftp" x="792" y="20" width="28" height="28"/>
+        <text x="876" y="32" class="label">FTP client</text>
+        <text x="876" y="50" class="sublabel">ftp / FileZilla, user wp_ftp</text>
+      </g>
+
+      <!-- row 1: exposed services -->
+      <g class="node" data-info="nginx — sole entrypoint. 443 HTTPS only, TLS 1.2/1.3. Port 80 doesn't work.">
+        <rect x="40" y="146" width="160" height="70" rx="8" class="box box-green"/>
+        <use href="#logo-nginx" x="52" y="164" width="30" height="30"/>
+        <text x="136" y="176" class="label">nginx</text>
+        <text x="136" y="196" class="sublabel">443 HTTPS</text>
+      </g>
+      <g class="node" data-info="static-site — serves this exact page: plain HTML/CSS/JS from its own tiny nginx, no PHP and no database involved.">
+        <rect x="240" y="146" width="160" height="70" rx="8" class="box box-html"/>
+        <use href="#logo-static" x="252" y="164" width="30" height="30"/>
+        <text x="336" y="176" class="label">static-site</text>
+        <text x="336" y="196" class="sublabel">8080</text>
+      </g>
+      <g class="node" data-info="adminer — a one-file database GUI: lets you browse and edit MariaDB's real tables from the browser.">
+        <rect x="420" y="146" width="160" height="70" rx="8" class="box box-orange"/>
+        <use href="#logo-adminer" x="432" y="164" width="30" height="30"/>
+        <text x="516" y="176" class="label">adminer</text>
+        <text x="516" y="196" class="sublabel">8081</text>
+      </g>
+      <g class="node" data-info="portainer — a web dashboard that shows and manages every container in this stack, by reading docker.sock (read-only).">
+        <rect x="600" y="146" width="160" height="70" rx="8" class="box box-blue"/>
+        <use href="#logo-portainer" x="612" y="164" width="30" height="30"/>
+        <text x="696" y="176" class="label">portainer</text>
+        <text x="696" y="196" class="sublabel">9443</text>
+      </g>
+      <g class="node" data-info="ftp — a vsftpd file server jailed into the WordPress files: upload or download site files directly over FTP.">
+        <rect x="780" y="146" width="160" height="70" rx="8" class="box box-purple"/>
+        <use href="#logo-ftp" x="792" y="164" width="30" height="30"/>
+        <text x="876" y="176" class="label">ftp</text>
+        <text x="876" y="196" class="sublabel">21 + passive</text>
+      </g>
+
+      <!-- row 2: internal -->
+      <g class="node" data-info="wordpress — php-fpm only, no nginx inside. Listens on 9000, internal only.">
+        <rect x="40" y="296" width="160" height="70" rx="8" class="box box-blue"/>
+        <use href="#logo-wordpress" x="52" y="314" width="30" height="30"/>
+        <text x="136" y="326" class="label">wordpress</text>
+        <text x="136" y="346" class="sublabel">9000 (internal)</text>
+      </g>
+      <g class="node" data-info="redis — in-memory cache: keeps WordPress's repeated database answers between page loads so MariaDB is asked less.">
+        <rect x="240" y="296" width="160" height="70" rx="8" class="box box-blue"/>
+        <use href="#logo-redis" x="252" y="314" width="30" height="30"/>
+        <text x="336" y="326" class="label">redis</text>
+        <text x="336" y="346" class="sublabel">6379 (internal)</text>
+      </g>
+
+      <!-- row 3: db -->
+      <g class="node" data-info="mariadb — DB engine only, no ports: mapping either.">
+        <rect x="40" y="436" width="160" height="70" rx="8" class="box box-purple"/>
+        <use href="#logo-mariadb" x="52" y="454" width="30" height="30"/>
+        <text x="136" y="466" class="label">mariadb</text>
+        <text x="136" y="486" class="sublabel">3306 (internal)</text>
+      </g>
+
+      <!-- volumes: drawn as cylinders, drawio-style -->
+      <g class="node" data-info="wp_data — named volume. driver_opts binds it to a real VM folder below.">
+        <path d="M40,574 v42 a80,13 0 0 0 160,0 v-42" class="cyl-body"/>
+        <ellipse cx="120" cy="574" rx="80" ry="13" class="cyl-top"/>
+        <text x="120" y="600" class="label small">wp_data</text>
+        <text x="120" y="616" class="cyl-path">/home/eel-garo/data/wordpress</text>
+      </g>
+      <g class="node" data-info="db_data — named volume. driver_opts binds it to a real VM folder below.">
+        <path d="M240,574 v42 a80,13 0 0 0 160,0 v-42" class="cyl-body"/>
+        <ellipse cx="320" cy="574" rx="80" ry="13" class="cyl-top"/>
+        <text x="320" y="600" class="label small">db_data</text>
+        <text x="320" y="616" class="cyl-path">/home/eel-garo/data/mariadb</text>
+      </g>
+      <g class="node" data-info="portainer_data — plain named volume, Docker picks where it lives.">
+        <path d="M420,574 v42 a80,13 0 0 0 160,0 v-42" class="cyl-body"/>
+        <ellipse cx="500" cy="574" rx="80" ry="13" class="cyl-top"/>
+        <text x="500" y="600" class="label small">portainer_data</text>
+        <text x="500" y="616" class="cyl-path">plain named volume</text>
+      </g>
+
+      <!-- real VM folders (inside VM, outside the Docker network) -->
+      <g class="node" data-info="Real folder on the VM disk — survives docker compose down, docker rm, everything short of rm -rf.">
+        <use href="#logo-folder" x="48" y="700" width="24" height="24"/>
+        <text x="130" y="712" class="pathlabel">/home/eel-garo/</text>
+        <text x="130" y="728" class="pathlabel">data/wordpress</text>
+      </g>
+      <g class="node" data-info="Real folder on the VM disk — MariaDB's actual database files live here.">
+        <use href="#logo-folder" x="248" y="700" width="24" height="24"/>
+        <text x="330" y="712" class="pathlabel">/home/eel-garo/</text>
+        <text x="330" y="728" class="pathlabel">data/mariadb</text>
+      </g>
+      <g class="node" data-info="Docker-managed path — no driver_opts, so Docker chooses (/var/lib/docker/volumes/...).">
+        <use href="#logo-folder" x="428" y="700" width="24" height="24"/>
+        <text x="510" y="712" class="pathlabel">/var/lib/docker/</text>
+        <text x="510" y="728" class="pathlabel">volumes/portainer_data</text>
+      </g>
+
+      <text x="750" y="720" class="netlabel">driver_opts: type none, o bind —</text>
+      <text x="750" y="738" class="netlabel">named volume + fixed VM path</text>
+    </svg>
+  </main>
+
+  <footer>
+    <p>This project has been created as part of the 42 curriculum by eel-garo.</p>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
