@@ -19,8 +19,10 @@ if [ -z "$(ls -A "$DB_DATA_DIR" 2>/dev/null)" ]; then
 	DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 	DB_PASSWORD=$(cat /run/secrets/db_password)
 
+	# runs the DB server as user mysql, executes the piped-in SQL once, then exits
 	mysqld --user=mysql --bootstrap <<-EOSQL
     USE mysql;
+	DELETE FROM mysql.user WHERE User='';
     FLUSH PRIVILEGES;
     ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}';
     CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
@@ -33,3 +35,6 @@ if [ -z "$(ls -A "$DB_DATA_DIR" 2>/dev/null)" ]; then
 fi
 
 exec mysqld --user=mysql
+
+# USE mysql; == switch to MariaDB's own internal mysql system database
+# CREATE DATABASE = make the database itself exist. CREATE USER = make a login account exist

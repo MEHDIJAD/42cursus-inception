@@ -2,91 +2,77 @@ COMPOSE = docker compose -f srcs/docker-compose.yml
 
 DATA_DIR  := /home/eel-garo/data
 
-GREEN  := \033[0;32m
-YELLOW := \033[0;33m
-CYAN   := \033[0;36m
-RED    := \033[0;31m
-RESET  := \033[0m
-
 data-dirs:
-	@printf "$(CYAN)Ensuring data dirs exist in $(DATA_DIR)...$(RESET)\n"
+	@echo "Ensuring data dirs exist in $(DATA_DIR)..."
 	mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
 
 up: data-dirs
-	@printf "$(CYAN)Building and starting the stack...$(RESET)\n"
+	@echo "Building and starting the stack..."
 	$(COMPOSE) up --build -d
-	@printf "$(GREEN)Stack is up.$(RESET)\n"
+	@echo "Stack is up."
 
 down:
-	@printf "$(YELLOW)Stopping and removing containers...$(RESET)\n"
+	@echo "Stopping and removing containers..."
 	$(COMPOSE) down
-	@printf "$(GREEN)Done.$(RESET)\n"
-
+	@echo "Done."
 
 stop:
-	@printf "$(YELLOW)Pausing containers...$(RESET)\n"
+	@echo "Pausing containers..."
 	$(COMPOSE) stop
-	@printf "$(GREEN)Stopped.$(RESET)\n"
+	@echo "Stopped."
 
 start:
-	@printf "$(CYAN)Resuming containers...$(RESET)\n"
+	@echo "Resuming containers..."
 	$(COMPOSE) start
-	@printf "$(GREEN)Started.$(RESET)\n"
-
+	@echo "Started."
 
 restart:
-	@printf "$(CYAN)Restarting $(if $(s),$(s),all services)...$(RESET)\n"
+	@echo "Restarting $(if $(s),$(s),all services)..."
 	$(COMPOSE) restart $(s)
-	@printf "$(GREEN)Done.$(RESET)\n"
+	@echo "Done."
 
 ps:
-	@printf "$(CYAN)=== containers ===$(RESET)\n"
+	@echo "=== containers ==="
 	@$(COMPOSE) ps
 
-
 logs:
-	@printf "$(CYAN)Tailing logs for $(if $(s),$(s),all services)...$(RESET)\n"
+	@echo "Tailing logs for $(if $(s),$(s),all services)..."
 	$(COMPOSE) logs -f --tail=10 $(s)
 
 build:
-	@printf "$(CYAN)Building images...$(RESET)\n"
+	@echo "Building images..."
 	$(COMPOSE) build
-	@printf "$(GREEN)Build done.$(RESET)\n"
-
+	@echo "Build done."
 
 shell:
-	@printf "$(CYAN)Opening shell in $(s)...$(RESET)\n"
+	@echo "Opening shell in $(s)..."
 	$(COMPOSE) exec $(s) sh
 
-
 status:
-	@printf "$(CYAN)=== containers ===$(RESET)\n"
+	@echo "=== containers ==="
 	@$(COMPOSE) ps
 	@echo ""
-	@printf "$(CYAN)=== network ===$(RESET)\n"
+	@echo "=== network ==="
 	@docker network ls
 	@echo ""
-	@printf "$(CYAN)=== volumes ===$(RESET)\n"
+	@echo "=== volumes ==="
 	@docker volume ls --filter name=wp_data --filter name=db_data --filter name=portainer_data
 
-# docker system prune -f: removes stopped containers, unused networks, dangling (untagged) images, 
+# docker system prune -f: removes stopped containers, unused networks, dangling (untagged) images,
 # and build cache across all of Docker, not just this project. -f = force.
 clean: down
-	@printf "$(YELLOW)Pruning unused Docker resources...$(RESET)\n"
+	@echo "Pruning unused Docker resources..."
 	docker system prune -f
-	@printf "$(GREEN)clean done.$(RESET)\n"
+	@echo "clean done."
 
-# fclean: full wipe. Removes Docker's own record of the volumes (docker
-# volume rm), AND the real files at the bind-mounted host path — since
-# those never get deleted by "docker volume rm" or "down -v" alone
-# (bug learned the hard way, see NOTES.md). sudo is required because the
-# data was written by root/www-data/mysql inside the containers.
+# fclean: full wipe = volume rm + bind-mount-host-path
+# -a means "everything," not just the stuff nobody's using anymore.
 fclean: down
-	@printf "$(RED)Wiping volumes and host data — this cannot be undone...$(RESET)\n"
+	@echo "Wiping volumes and host data — this cannot be undone..."
 	docker volume rm db_data wp_data portainer_data
 	sudo rm -rf $(DATA_DIR)/*
 	docker system prune -af --volumes
-	@printf "$(GREEN)fclean done.$(RESET)\n"
+	@echo "fclean done."
 
 re: fclean up
 
