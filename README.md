@@ -2,7 +2,7 @@
 
 ![Inception architecture](assets/architecture.png)
 
-For the full breakdown of my journey on this project, read this: [Notion page](https://app.notion.com/p/Inception-32b43e92de4080c48be2e1441544f187?source=copy_link)
+For the full breakdown of my journey on this project, read this: [notion page](https://app.notion.com/p/Inception-32b43e92de4080c48be2e1441544f187?source=copy_link)
 
 # Inception
 
