@@ -1,6 +1,6 @@
-![Inception architecture](assets/architecture.png)
-
 *This project has been created as part of the 42 curriculum by [eel-garo](https://github.com/MEHDIJAD).*
+
+![Inception architecture](assets/architecture.png)
 
 For the full breakdown of my journey on this project, read this: [Notion page](https://app.notion.com/p/Inception-32b43e92de4080c48be2e1441544f187?source=copy_link)
 
