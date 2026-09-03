@@ -3,10 +3,6 @@ set -e
 
 WP_PATH=/var/www/html
 
-# --- 1. Wait for MariaDB, bounded — not an infinite loop ---
-# Containers can start in any order. mariadb might still be running
-# its own first-time init (Lesson 4) when this container starts.
-# This retries a fixed number of times, then gives up loudly.
 i=0
 until nc -z "$WORDPRESS_DB_HOST" 3306 2>/dev/null || [ "$i" -ge 30 ]; do
   i=$((i + 1))
@@ -20,17 +16,15 @@ if [ "$i" -ge 30 ]; then
   exit 1
 fi
 
-# --- 2. Only install once — the volume may already hold a real site ---
+
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
   printf "${YELLOW}[wordpress]${NC} No WordPress install found — setting up...\n"
 
   DB_PASSWORD=$(cat /run/secrets/db_password)
-  # credentials.txt: KEY=VALUE lines, sourced directly as shell vars.
-  # This project's own convention — the subject doesn't mandate a
-  # format, only that the file exists and holds real secret values.
+
   . /run/secrets/credentials
 
-  # --- 3. Reject a banned admin username before it's ever used ---
+
   case "$(echo "$WP_ADMIN_USER" | tr 'A-Z' 'a-z')" in
     *admin*|*administrator*)
       echo "WP_ADMIN_USER must not contain 'admin' or 'administrator'" >&2
@@ -68,15 +62,10 @@ fi
 
 chown -R www-data:www-data "$WP_PATH"
 
-# 1. connection details first — set them before the plugin needs them
 wp config set WP_REDIS_HOST "$REDIS_HOST" --path=/var/www/html --allow-root
 wp config set WP_REDIS_PORT "$REDIS_PORT" --path=/var/www/html --allow-root --raw
 
-# 2. install + activate the plugin, then turn the object cache on
 wp plugin install redis-cache --activate --path=/var/www/html --allow-root
 wp redis enable --path=/var/www/html --allow-root
 
-# --nodaemonize: without this, php-fpm forks into the background
-# and this script (PID 1) exits — the container would stop
-# immediately even though php-fpm is technically still "running".
 exec php-fpm8.2 --nodaemonize
