@@ -1,3 +1,5 @@
+![Inception architecture](assets/architecture.png)
+
 *This project has been created as part of the 42 curriculum by [eel-garo](https://github.com/MEHDIJAD).*
 
 # Inception
